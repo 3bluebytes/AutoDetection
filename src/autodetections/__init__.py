@@ -1,0 +1,2 @@
+"""AutoDectections agent package."""
+
