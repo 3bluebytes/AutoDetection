@@ -1,0 +1,13 @@
+==> /var/log/avocado/test.log <==
+2026-04-12 09:20:05.000+08:00 [ERROR] Test internal error: assertion failed at utils.py:123
+2026-04-12 09:20:05.234+08:00 [ERROR] Traceback (most recent call last):
+2026-04-12 09:20:05.345+08:00 [ERROR]   File "virt_testsuite/storage_test/iscsi_pool.py", line 45, in test_iscsi_pool
+2026-04-12 09:20:05.456+08:00 [ERROR]     assert pool_info['capacity'] > 0, "Pool capacity should be positive"
+2026-04-12 09:20:05.567+08:00 [ERROR] AssertionError: Pool capacity should be positive
+
+==> /var/log/libvirt/libvirtd.log <==
+2026-04-12 09:20:03.000+08:00 33333: warning: iscsi pool 'iscsi-pool' has capacity 0
+2026-04-12 09:20:03.234+08:00 33333: warning: iSCSI target not ready
+
+==> /var/log/messages <==
+2026-04-12 09:20:03.000+08:00 iscsiadm: Could not connect to iscsid: Connection refused

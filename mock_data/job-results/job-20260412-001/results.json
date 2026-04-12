@@ -1,0 +1,90 @@
+{
+  "job_id": "job-20260412-001",
+  "date": "2026-04-12T08:30:00Z",
+  "build_id": "build-5823",
+  "host": "test-runner-01",
+  "total": 156,
+  "passed": 142,
+  "failed": 8,
+  "skipped": 6,
+  "tests": [
+    {
+      "id": "1",
+      "name": "virt_testsuite.guest_test.parallel_migration",
+      "status": "PASS",
+      "time": 245.3,
+      "start": "2026-04-12T08:35:00Z",
+      "end": "2026-04-12T08:39:05Z"
+    },
+    {
+      "id": "2",
+      "name": "virt_testsuite.guest_test.memory_hotplug",
+      "status": "FAIL",
+      "time": 180.5,
+      "start": "2026-04-12T08:40:00Z",
+      "end": "2026-04-12T08:43:00Z",
+      "fail_reason": "libvirt error: Failed to attach memory device",
+      "error_type": "libvirt_error"
+    },
+    {
+      "id": "3",
+      "name": "virt_testsuite.guest_test.nested_kvm",
+      "status": "FAIL",
+      "time": 600.0,
+      "start": "2026-04-12T08:45:00Z",
+      "end": "2026-04-12T08:55:00Z",
+      "fail_reason": "Test timeout after 600 seconds",
+      "error_type": "timeout"
+    },
+    {
+      "id": "4",
+      "name": "virt_testsuite.storage_test.qcow2_snapshot",
+      "status": "FAIL",
+      "time": 45.2,
+      "start": "2026-04-12T09:00:00Z",
+      "end": "2026-04-12T09:00:45Z",
+      "fail_reason": "qemu-img: qcow2 snapshot creation failed: Invalid argument",
+      "error_type": "qemu_crash"
+    },
+    {
+      "id": "5",
+      "name": "virt_testsuite.network_test.bridge_mtu",
+      "status": "FAIL",
+      "time": 12.3,
+      "start": "2026-04-12T09:05:00Z",
+      "end": "2026-04-12T09:05:12Z",
+      "fail_reason": "Out of memory: Kill process 5421 (qemu-kvm) score 950 or sacrifice child",
+      "error_type": "memory_issue"
+    },
+    {
+      "id": "6",
+      "name": "virt_testsuite.guest_test.virsh_console",
+      "status": "FAIL",
+      "time": 30.1,
+      "start": "2026-04-12T09:10:00Z",
+      "end": "2026-04-12T09:10:30Z",
+      "fail_reason": "kernel panic - not syncing: VFS: Unable to mount root fs",
+      "error_type": "kernel_panic"
+    },
+    {
+      "id": "7",
+      "name": "virt_testsuite.guest_test.live_migration",
+      "status": "FAIL",
+      "time": 95.4,
+      "start": "2026-04-12T09:15:00Z",
+      "end": "2026-04-12T09:16:50Z",
+      "fail_reason": "environment: Host machine lost connectivity during test",
+      "error_type": "environment_issue"
+    },
+    {
+      "id": "8",
+      "name": "virt_testsuite.storage_test.iscsi_pool",
+      "status": "FAIL",
+      "time": 8.5,
+      "start": "2026-04-12T09:20:00Z",
+      "end": "2026-04-12T09:20:08Z",
+      "fail_reason": "Test internal error: assertion failed at utils.py:123",
+      "error_type": "case_script_issue"
+    }
+  ]
+}

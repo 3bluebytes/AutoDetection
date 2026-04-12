@@ -1,0 +1,10 @@
+==> /var/log/qemu/qemu-3.log <==
+2026-04-12 09:00:15.123+08:00 [qemu] error: qcow2_snapshot: bdrv_snapshot_create failed: Invalid argument
+2026-04-12 09:00:15.234+08:00 [qemu] error: qemu-img: 'qemu-img snapshot' failed
+
+==> /var/log/libvirt/libvirtd.log <==
+2026-04-12 09:00:15.345+08:00 98765: error: qemuDomainSnapshotCreateXML:2345 - Snapshot creation failed
+
+==> dmesg <==
+[98765.123] device-mapper: snapshot: Invalid argument
+[98765.234] EXT4-fs error: IO error

@@ -1,0 +1,15 @@
+==> /var/log/messages <==
+2026-04-12 09:10:15.000+08:00 kernel: [2345678.123] Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)
+2026-04-12 09:10:15.234+08:00 kernel: [2345678.234] CPU: 4 PID: 1234 Comm: qemu-kvm Not tainted 5.15.0-generic #1
+2026-04-12 09:10:15.345+08:00 kernel: [2345678.345] Call Trace:
+2026-04-12 09:10:15.456+08:00 kernel: [2345678.456]  dump_stack+0x65/0x77
+2026-04-12 09:10:15.567+08:00 kernel: [2345678.567]  panic+0x101/0x1e5
+
+==> dmesg <==
+[2345678.123] VFS: Unable to mount root fs on unknown-block(0,0)
+[2345678.234] Kernel panic - not syncing: VFS: Unable to mount root fs
+[2345678.345] qemu-kvm: kernel panic detected, shutting down VM
+
+==> /var/log/libvirt/libvirtd.log <==
+2026-04-12 09:10:15.000+08:00 11111: error: Domain virsh_console crashed due to kernel panic
+2026-04-12 09:10:15.123+08:00 11111: error: qemuProcessKill: VM crashed with exit code 1

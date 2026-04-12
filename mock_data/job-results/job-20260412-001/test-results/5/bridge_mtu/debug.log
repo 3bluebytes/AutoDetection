@@ -1,0 +1,12 @@
+==> /var/log/messages <==
+2026-04-12 09:05:10.123+08:00 kernel: [1234567.890] Out of memory: Kill process 5421 (qemu-kvm) score 950 or sacrifice child
+2026-04-12 09:05:10.234+08:00 kernel: [1234567.901] Killed process 5421 total-vm:16384000kB, anon-rss:8192000kB, file-rss:0kB
+
+==> dmesg <==
+[1234567.890] oom-killer: gfp_mask=0x1400c0(GFP_KERNEL), nodemask=0
+[1234567.901] qemu-kvm: invoked oom-killer: gfp_mask=0x1400c0, order=0, oom_score_adj=0
+[1234567.950] Memory cgroup out of memory: Killed process 5421 (qemu-kvm)
+
+==> /var/log/qemu/qemu-4.log <==
+2026-04-12 09:05:10.000+08:00 [qemu] fatal: qemu-kvm: Could not open '/dev/kvm': No such file or directory
+2026-04-12 09:05:10.123+08:00 [qemu] error: Out of memory during allocation

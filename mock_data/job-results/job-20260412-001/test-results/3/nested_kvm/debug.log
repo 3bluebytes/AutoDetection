@@ -1,0 +1,12 @@
+==> /var/log/libvirt/libvirtd.log <==
+2026-04-12 08:50:12.123+08:00 54321: warning: Migration operation took longer than expected
+2026-04-12 08:55:00.000+08:00 54321: error: Migration timeout after 600 seconds
+2026-04-12 08:55:00.234+08:00 54321: error: Connection broken: peer disappeared
+
+==> /var/log/qemu/qemu-2.log <==
+2026-04-12 08:50:00.000+08:00 [qemu] info: Starting nested KVM test
+2026-04-12 08:55:00.000+08:00 [qemu] warning: Live migration did not complete within timeout
+
+==> dmesg <==
+[54321.123] kvm: nested virtualization not enabled
+[54321.456] kvm: nested migration: cancelled due to timeout

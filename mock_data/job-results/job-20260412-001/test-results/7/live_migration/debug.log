@@ -1,0 +1,11 @@
+==> /var/log/messages <==
+2026-04-12 09:15:30.000+08:00 kernel: [3456789.123] eth0: link down
+2026-04-12 09:15:30.234+08:00 kernel: [3456789.234] bridge0: port 1(eth0) entered disabled state
+
+==> /var/log/libvirt/libvirtd.log <==
+2026-04-12 09:15:25.000+08:00 22222: warning: Live migration: source network connectivity lost
+2026-04-12 09:15:30.000+08:00 22222: error: Migration failed: Connection lost during migration
+
+==> /var/log/qemu/qemu-5.log <==
+2026-04-12 09:15:25.000+08:00 [qemu] info: Starting live migration to 192.168.100.10
+2026-04-12 09:15:30.000+08:00 [qemu] error: migration: connection closed unexpectedly

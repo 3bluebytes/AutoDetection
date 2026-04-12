@@ -1,0 +1,41 @@
+# OpenCLAW Agent: Avocado Parser Agent
+# 职责：解析 Avocado results.json，提取失败用例
+
+name: avocado_parser
+description: Parses Avocado test results and extracts failed test cases
+
+# Agent 专属工具
+tools:
+  - name: read_json
+    description: Read and parse JSON files
+    enabled: true
+  - name: file_glob
+    description: Find files by pattern
+    enabled: true
+
+# 系统提示词
+system_prompt: |
+  You are the Avocado Parser Agent. Your job is to:
+  1. Read the results.json file from the job results directory
+  2. Extract all failed test cases with their metadata (name, error_type, fail_reason, time)
+  3. Output a structured list of failed tests
+
+  Input: Job results directory path
+  Output: JSON array of failed test cases with fields:
+    - test_id
+    - test_name
+    - status
+    - error_type
+    - fail_reason
+    - duration
+
+# 启动行为
+on_startup:
+  - read job-results/results.json
+  - extract failed tests
+  - send to collector agent via session
+
+# 通信配置
+communication:
+  send_to: avocado_collector
+  trigger: on_parse_complete

@@ -1,0 +1,12 @@
+==> /var/log/libvirt/libvirtd.log <==
+2026-04-12 08:41:23.456+08:00 12345: error: virDomainMemoryPlug:1712 - Operation not supported: device 'memory' not supported by this hypervisor
+2026-04-12 08:41:23.678+08:00 12345: error: Domain memory_hotplug: Failed to attach memory device
+2026-04-12 08:41:23.890+08:00 12345: error: virCommandRun:2290 - Child process (virsh attach-device) exited with status 1
+
+==> /var/log/qemu/qemu-1.log <==
+2026-04-12 08:41:23.123+08:00 [qemu] error: kvm_set_device_memory_region: KVM_CAP_DEVICE_MEM_SUPPORT not available
+2026-04-12 08:41:23.234+08:00 [qemu] warning: Memory hotplug not supported in current KVM version
+
+==> dmesg <==
+[12345.678] Out of memory: Not enough memory to satisfy request
+[12345.890] kvm: failed to initialize memory backend
