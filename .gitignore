@@ -3,6 +3,6 @@ __pycache__/
 .venv/
 dist/
 build/
-outputs/
+output/
 *.pyc
-
+.env
