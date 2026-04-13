@@ -1,0 +1,50 @@
+[
+  {
+    "id": "BUG-1001",
+    "pattern": "memory hotplug.*not supported|Failed to attach memory device",
+    "component": "libvirt",
+    "version_range": ["4.5.0", "4.8.0"],
+    "summary": "内存热插拔在 KVM 旧版本不支持，需升级到 4.8.1+",
+    "owner": "计算组-张三"
+  },
+  {
+    "id": "BUG-1002",
+    "pattern": "bdrv_snapshot_create failed|qcow2 snapshot creation failed",
+    "component": "qemu",
+    "version_range": ["8.1.0", "8.2.3"],
+    "summary": "qcow2 快照创建在某些存储后端上失败，已在 8.2.4 修复",
+    "owner": "计算组-李四"
+  },
+  {
+    "id": "BUG-1003",
+    "pattern": "kernel panic.*VFS|Unable to mount root fs",
+    "component": "kernel",
+    "version_range": ["5.15.0", "5.15.50"],
+    "summary": "特定内核版本在 initramfs 配置不当时触发 VFS panic",
+    "owner": "内核组-王五"
+  },
+  {
+    "id": "BUG-1004",
+    "pattern": "oom-killer|Memory cgroup out of memory",
+    "component": "kernel",
+    "version_range": [],
+    "summary": "cgroup 内存限制与 QEMU 内存分配冲突，需调整 memory.limit_in_bytes",
+    "owner": "内核组-赵六"
+  },
+  {
+    "id": "BUG-1005",
+    "pattern": "iscsi.*[Cc]onnection refused|iSCSI target not ready",
+    "component": "storage",
+    "version_range": ["3.0.0", "3.1.2"],
+    "summary": "iSCSI 目标端在并发连接时偶尔拒绝，已知问题待存储组件修复",
+    "owner": "存储组-吴十"
+  },
+  {
+    "id": "BUG-1006",
+    "pattern": "migration.*cancelled|migration.*timeout|live migration.*failed",
+    "component": "libvirt",
+    "version_range": [],
+    "summary": "大内存 VM 热迁移超时，需调整 migration_downtime_limit",
+    "owner": "计算组-张三"
+  }
+]

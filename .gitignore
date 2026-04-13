@@ -6,3 +6,6 @@ build/
 output/
 *.pyc
 .env
+# RAG runtime index
+chroma_db/
+tfidf_index.json

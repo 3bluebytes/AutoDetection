@@ -1,0 +1,138 @@
+{
+  "libvirt": {
+    "repo": "https://gitlab.com/libvirt/libvirt.git",
+    "branches": {
+      "v9.0.0": "libvirt 9.0.0 稳定版",
+      "v9.5.0": "libvirt 9.5.0 最新稳定版",
+      "v10.0.0": "libvirt 10.0.0 开发版"
+    },
+    "architecture": [
+      {
+        "module": "src/libvirt-domain",
+        "description": "域(Domain/VM)生命周期管理：定义、创建、启动、停止、迁移、快照",
+        "key_files": ["domain_conf.c", "domain_event.c", "snapshot_conf.c"],
+        "related_failures": ["libvirt_error", "timeout"],
+        "detail": "域管理是 libvirt 的核心模块，负责虚拟机的完整生命周期。常见失败场景：(1) virDomainCreate 返回 Operation not supported 通常意味着底层驱动不支持该操作；(2) 热迁移超时可能与 migration_downtime_limit 配置有关；(3) 快照失败通常与 qcow2 后端有关。"
+      },
+      {
+        "module": "src/libvirt-driver-qemu",
+        "description": "QEMU 驱动层：libvirt 与 QEMU 进程的交互接口",
+        "key_files": ["qemu_driver.c", "qemu_process.c", "qemu_migration.c"],
+        "related_failures": ["libvirt_error", "qemu_crash", "timeout"],
+        "detail": "QEMU 驱动是 libvirt 最复杂的模块，负责管理 QEMU 进程。qemuProcessStart 启动 VM 时如果 QEMU 崩溃，会在 qemuProcessKill 中清理。迁移相关逻辑在 qemu_migration.c，超时和连接断开是常见问题。"
+      },
+      {
+        "module": "src/util",
+        "description": "工具函数库：内存管理、日志、命令执行、JSON 解析",
+        "key_files": ["viralloc.c", "virlog.c", "vircommand.c", "virjson.c"],
+        "related_failures": ["memory_issue", "libvirt_error"],
+        "detail": "viralloc.c 是 libvirt 的内存管理核心，OOM 时会返回 ENOMEM。vircommand.c 负责执行外部命令（如 virsh），命令执行失败会记录在 libvirtd.log 中。"
+      },
+      {
+        "module": "src/conf",
+        "description": "XML 配置解析：domain XML、network XML、storage pool XML",
+        "key_files": ["domain_conf.c", "network_conf.c", "storage_conf.c"],
+        "related_failures": ["libvirt_error", "infrastructure_issue"],
+        "detail": "配置解析模块负责将 XML 转为内部数据结构。如果 VM 的 XML 配置了不支持的设备（如旧版本不支持内存热插拔），会在 domain_conf.c 解析阶段或驱动 attach 阶段报错。"
+      }
+    ]
+  },
+  "qemu": {
+    "repo": "https://gitlab.com/qemu-project/qemu.git",
+    "branches": {
+      "v8.1.0": "QEMU 8.1.0",
+      "v8.2.0": "QEMU 8.2.0 稳定版",
+      "v9.0.0": "QEMU 9.0.0 开发版"
+    },
+    "architecture": [
+      {
+        "module": "migration",
+        "description": "热迁移：内存页面传输、脏页追踪、迁移状态机",
+        "key_files": ["migration/migration.c", "migration/ram.c", "migration/savevm.c"],
+        "related_failures": ["timeout", "environment_issue", "qemu_crash"],
+        "detail": "热迁移是 QEMU 最复杂的特性之一。migration.c 是主状态机，ram.c 处理内存页面传输。常见失败：(1) 迁移超时通常因为脏页产生速度大于传输速度；(2) 网络中断会导致迁移直接失败；(3) 大内存 VM 需要调整 downtime_limit。"
+      },
+      {
+        "module": "block",
+        "description": "块设备层：qcow2、raw、iscsi 等存储后端",
+        "key_files": ["block/qcow2.c", "block/block-backend.c", "block/snapshot.c"],
+        "related_failures": ["qemu_crash", "infrastructure_issue"],
+        "detail": "块设备层负责所有存储操作。qcow2.c 实现快照功能，bdrv_snapshot_create 失败通常是 qcow2 文件损坏或版本不兼容。iscsi 后端连接失败会报 Connection refused。"
+      },
+      {
+        "module": "target/i386",
+        "description": "x86 KVM 加速：VM 执行、内存映射、嵌套虚拟化",
+        "key_files": ["kvm.c", "kvm_kick.c"],
+        "related_failures": ["kernel_panic", "memory_issue", "timeout"],
+        "detail": "KVM 模块是 QEMU 性能的关键。kvm.c 负责与内核 KVM 模块交互。常见问题：(1) KVM_SET_DEVICE_MEMORY_REGION 失败说明内核不支持设备内存；(2) 嵌套虚拟化需要内核开启 kvm_intel.nested=1；(3) OOM 时 QEMU 进程会被内核杀掉。"
+      },
+      {
+        "module": "memory",
+        "description": "内存管理：内存区域、地址空间、内存热插拔",
+        "key_files": ["softmmu/memory.c", "softmmu/physmem.c"],
+        "related_failures": ["memory_issue", "libvirt_error"],
+        "detail": "内存管理模块负责 QEMU 的地址空间布局。memory_region_add_subregion 处理内存热插拔请求，如果底层 KVM 不支持，会返回错误。OOM 时 QEMU 的内存分配失败会导致进程崩溃。"
+      }
+    ]
+  },
+  "dpdk": {
+    "repo": "https://dpdk.org/git/dpdk",
+    "branches": {
+      "v23.11": "DPDK 23.11 LTS",
+      "v24.07": "DPDK 24.07"
+    },
+    "architecture": [
+      {
+        "module": "lib/ethdev",
+        "description": "以太网设备抽象层：端口管理、收发队列、RSS、offload",
+        "key_files": ["rte_ethdev.c", "rte_ethdev_core.h"],
+        "related_failures": ["environment_issue", "timeout"],
+        "detail": "ethdev 是 DPDK 网络功能的核心抽象层。常见问题：(1) 端口初始化失败可能是 PF/VF 映射问题；(2) 收发队列配置错误导致丢包；(3) RSS 配置不当导致流量不均衡。"
+      },
+      {
+        "module": "lib/eal",
+        "description": "环境抽象层：内存管理、CPU 绑定、PCI 设备、中断",
+        "key_files": ["rte_eal.c", "rte_malloc.c", "rte_pci.c"],
+        "related_failures": ["memory_issue", "environment_issue"],
+        "detail": "EAL 是 DPDK 的基础设施层。rte_malloc.c 管理大页内存，分配失败通常是大页不足。rte_pci.c 负责 PCI 设备绑定，VFIO 驱动问题会导致设备初始化失败。"
+      },
+      {
+        "module": "drivers/net",
+        "description": "网卡驱动：i40e, ixgbe, mlx5, virtio 等驱动实现",
+        "key_files": ["i40e/i40e_ethdev.c", "mlx5/mlx5.c", "virtio/virtio_ethdev.c"],
+        "related_failures": ["environment_issue", "timeout"],
+        "detail": "网卡驱动直接与硬件交互。常见问题：(1) mlx5 驱动需要内核 OFED 支持；(2) virtio 驱动与后端 vhost 对接问题；(3) i40e 固件版本不匹配。"
+      }
+    ]
+  },
+  "ovs": {
+    "repo": "https://github.com/openvswitch/ovs.git",
+    "branches": {
+      "v3.3.0": "OVS 3.3.0",
+      "v3.4.0": "OVS 3.4.0"
+    },
+    "architecture": [
+      {
+        "module": "ofproto",
+        "description": "OpenFlow 协议层：流表管理、组表、meter",
+        "key_files": ["ofproto.c", "ofproto-dpif.c"],
+        "related_failures": ["environment_issue", "timeout"],
+        "detail": "ofproto 是 OVS 的核心，实现 OpenFlow 协议。流表下发失败通常是与控制器通信问题。ofproto-dpif.c 是与内核 datapath 的桥接层。"
+      },
+      {
+        "module": "lib/dpif",
+        "description": "Datapath 接口：与内核模块通信、流表 offload",
+        "key_files": ["dpif.c", "dpif-netdev.c"],
+        "related_failures": ["environment_issue", "memory_issue"],
+        "detail": "dpif 负责 OVS 用户态和内核态的交互。dpif-netdev.c 是纯用户态转发路径（vhost-user），内存不足会导致转发性能严重下降。"
+      },
+      {
+        "module": "vswitchd",
+        "description": "OVS 守护进程：桥管理、端口配置、隧道",
+        "key_files": ["bridge.c", "ovs-vswitchd.c"],
+        "related_failures": ["environment_issue", "infrastructure_issue"],
+        "detail": "vswitchd 是 OVS 的主守护进程。bridge.c 管理网桥和端口，VXLAN/GRE 隧道配置问题会导致网络不通。与 libvirt 对接时，vhost-user 端口配置错误是常见问题。"
+      }
+    ]
+  }
+}
