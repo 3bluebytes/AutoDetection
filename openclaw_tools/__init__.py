@@ -20,6 +20,11 @@ from .tools.version_identifier import (
     COMPONENT_TEAM_MAP,
     COMPONENT_REPO_MAP
 )
+from .tools.adversarial_diagnosis import adversarial_diagnose, DiagnosisStatus
+from .tools.model_chain import classify_with_model_chain
+from .tools.root_cause_cluster import cluster_failures
+from .tools.regression_detector import detect_regressions, detect_multi_version_regressions
+from .tools.rag_wiki import search_wiki, get_component_architecture
 
 __all__ = [
     # 日志读取
@@ -48,6 +53,19 @@ __all__ = [
     "get_responsibility",
     "COMPONENT_TEAM_MAP",
     "COMPONENT_REPO_MAP",
+    # 对抗诊断
+    "adversarial_diagnose",
+    "DiagnosisStatus",
+    # 模型升级链
+    "classify_with_model_chain",
+    # 根因聚类
+    "cluster_failures",
+    # 版本回归
+    "detect_regressions",
+    "detect_multi_version_regressions",
+    # RAG Wiki
+    "search_wiki",
+    "get_component_architecture",
 ]
 
 # 工具元数据注册表
@@ -80,6 +98,31 @@ TOOLS_REGISTRY = {
     "version_identifier": {
         "module": "tools.version_identifier",
         "description": "版本识别、已知问题匹配、责任人映射",
+        "enabled": True
+    },
+    "adversarial_diagnosis": {
+        "module": "tools.adversarial_diagnosis",
+        "description": "去中心化对抗诊断 + 仲裁",
+        "enabled": True
+    },
+    "model_chain": {
+        "module": "tools.model_chain",
+        "description": "置信度驱动模型升级链",
+        "enabled": True
+    },
+    "root_cause_cluster": {
+        "module": "tools.root_cause_cluster",
+        "description": "跨用例根因聚类",
+        "enabled": True
+    },
+    "regression_detector": {
+        "module": "tools.regression_detector",
+        "description": "版本回归检测",
+        "enabled": True
+    },
+    "rag_wiki": {
+        "module": "tools.rag_wiki",
+        "description": "UVP 组件架构 RAG 知识库",
         "enabled": True
     },
 }
