@@ -6,7 +6,6 @@ OpenCLAW Tool: llm_inference
 import os
 import json
 from typing import Dict, Optional
-import requests
 
 
 DEFAULT_LLM_CONFIG = {
@@ -70,6 +69,8 @@ def call_llm(
 
 def _call_deepseek(messages: list, api_key: str, config: Dict) -> Dict:
     """调用 DeepSeek API"""
+    import requests
+
     url = config.get("api_base", "https://api.deepseek.com/v1") + "/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
@@ -97,6 +98,8 @@ def _call_deepseek(messages: list, api_key: str, config: Dict) -> Dict:
 
 def _call_openai(messages: list, api_key: str, config: Dict) -> Dict:
     """调用 OpenAI API"""
+    import requests
+
     url = config.get("api_base", "https://api.openai.com/v1") + "/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",

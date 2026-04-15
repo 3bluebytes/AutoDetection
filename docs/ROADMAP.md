@@ -1,80 +1,33 @@
-# AutoDectections Agent - 改进路线图
+# Roadmap
 
 ## 当前状态
 
-- [x] Mock 数据（7 个失败用例 + 日志）
-- [x] 规则引擎归因（加权版，7/7 正确归因）
-- [x] Pipeline 脚本（Parser → Collector → Analyzer → Reporter）
-- [x] OpenCLAW Skill 配置（avocado-analyzer）
-- [x] 微信推送（通过 OpenCLAW weixin 插件）
-- [x] LLM 分析接口（DeepSeek API）
-- [x] Excel 日报（16 列含责任人/版本/已知问题）
-- [x] 累计统计（成功率/Flaky/首次失败版本/平均运行时间）
-- [x] 版本识别 + 已知问题知识库 + 责任人映射
-- [x] RAG Wiki（TF-IDF，libvirt/qemu/dpdk/ovs 14 个模块）
-- [x] 版本回归检测（PASS→FAIL = 高优先级回归）
-- [x] 创新点 1：去中心化对抗诊断 + 仲裁
-- [x] 创新点 2：置信度驱动模型升级链
-- [x] 创新点 3：根因聚类 - 跨用例关联分析
+- [x] 基于现有 `openclaw_tools/` 完成 4 段式 wrapper：parser / collector / analyzer / reporter
+- [x] 提供可合并的 `openclaw_runtime/openclaw.json` 多 agent 模板
+- [x] 为 5 个 workspace 补齐 `AGENTS.md`
+- [x] 入口 agent 与专责 agent 的职责边界拆清
+- [x] 运行产物统一落到 `openclaw_runtime/runs/<run_id>/`
+- [x] 规则引擎归因跑通 mock 数据
+- [x] Reporter 能生成 Markdown / JSON / Mercury payload
+- [x] LLM 依赖缺失时可自动退化到规则模式
 
-## 创新点实现
+## 下一步
 
-### 创新点 1：去中心化对抗诊断 + 仲裁 ✅
+- [ ] 把 `at-entry` 的编排从说明文档进一步收敛为稳定的 OpenClaw 任务模板
+- [ ] 为 `at-analyzer` 接回对抗诊断、模型升级链、根因聚类
+- [ ] 把 RAG Wiki 独立成 MCP 服务，而不是停留在本地库调用
+- [ ] 加上 `requirements.txt` 或 `pyproject.toml`
+- [ ] 补 CI，用 mock 数据跑 parser → collector → analyzer → reporter 回归
+- [ ] 把 Excel 依赖与 webhook 推送变成可选 profile
 
-两个 Agent 拿到同一份原始日志（互不知晓对方结论），独立诊断：
-- Agent A（规则引擎）：加权规则匹配
-- Agent B（LLM）：独立推理
-- 结论一致 → 高置信度输出
-- 结论冲突 → 仲裁 Agent（更强模型裁决）
-- 仲裁仍低置信度 → 标记"需人工介入"，输出双方诊断
+## 不再保留的旧结构
 
-核心洞察：单一 Agent 容易陷入确认偏误，去中心化诊断避免污染。
+下面这类内容已经从仓库主路径移除，不再作为主交付形式：
 
-面试话术：*"我设计了一个去中心化的对抗诊断机制。单一 Agent 容易陷入确认偏误——它一旦倾向某个分类，就会在日志里找支持自己判断的证据，忽略矛盾信息。所以我把同一份原始日志分别交给两个独立 Agent，它们互不知晓对方结论。只有双方独立得出相同结论时，我才高置信度输出。冲突时触发仲裁，仲裁仍然不确定的标记为人工介入。"*
+- 旧的 `openclaw_agents/*.yaml` 伪配置
+- 只做迁移设想的架构文档
+- 本地验证输出目录中的一次性结果文件
 
-### 创新点 2：置信度驱动模型升级链 ✅
+## 目标状态
 
-```
-Tier 0: 规则引擎 (成本≈0)       → high → 结束
-Tier 1: 快速模型 MiniMax (低成本) → medium → 快速模型补充 → 结束
-Tier 2: 推理模型 DeepSeek Reasoner (最强) → low → 深度推理 → 结束
-```
-
-面试话术：*"规则引擎覆盖 80% 高频问题零成本，只有不确定的才逐步升级模型。每天 150 个用例只有十几个需要调模型，大部分用快速模型就够了，推理模型只处理最难的。成本从'全用最强模型'的 N 元降到 0.1N。"*
-
-### 创新点 3：根因聚类 - 跨用例关联分析 ✅
-
-聚类维度：
-1. 时间窗口：同一时段（±5分钟）的失败
-2. 主机维度：同一 host 上的失败
-3. 类型关联：天然关联的失败类型组
-
-满足 2/3 维度即归为同一根因。
-
-测试结果：7 个独立问题 → 4 个根因（reduction_ratio = 1.8x）
-
-面试话术：*"逐条分析会报 7 个问题，但聚类后只有 4 个根因。一次网络抖动会导致迁移超时、连接断开、存储拒绝等多个用例同时失败，聚类 Agent 能发现这种时序和主机相关性。修 4 个问题比修 7 个问题快得多。"*
-
-## 架构演进
-
-### 最终架构
-
-```
-Parser(+版本识别) → Collector(+RAG检索)
-                          │
-              ┌───────────┼───────────┐
-              │                       │
-        Agent A(规则引擎)        Agent B(LLM)
-              │                       │
-              └───────┬───────────────┘
-                      │
-              一致？→ 直接输出
-              冲突？→ 仲裁Agent(推理模型)
-              不确定？→ 标记人工介入
-                      │
-              模型升级链(0→1→2级)
-                      │
-              根因聚类(跨用例关联)
-                      │
-              Reporter(Excel+MD+微信)
-```
+目标是把这个仓库稳定成一套“可本地验证、可被 OpenClaw 入口 agent 调度、可逐步替换为 MCP / skill / workflow”的中间态工程，而不是继续维护一套文档化的伪多 agent 架构。

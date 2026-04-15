@@ -8,7 +8,6 @@ import os
 from datetime import datetime
 from typing import Dict, List, Optional
 from pathlib import Path
-import requests
 
 
 def render_markdown_report(
@@ -166,6 +165,8 @@ def post_to_mercury(
     """
     推送到 Mercury 平台
     """
+    import requests
+
     endpoint = endpoint or os.environ.get("MERCURY_ENDPOINT")
     token = token or os.environ.get("MERCURY_TOKEN")
 
@@ -204,6 +205,8 @@ def post_to_webhook(
     """
     推送到 Slack/飞书 Webhook
     """
+    import requests
+
     # Slack 格式
     if webhook_type == "slack":
         slack_payload = {

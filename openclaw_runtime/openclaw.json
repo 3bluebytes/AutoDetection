@@ -1,0 +1,140 @@
+{
+  // Paste into ~/.openclaw/openclaw.json (JSON5 syntax is supported).
+  // If you already have model/provider/channel settings, keep them and merge the
+  // agents + bindings block below. The Telegram account here is just a concrete starter.
+  agents: {
+    defaults: {
+      sandbox: {
+        mode: "off",
+      },
+      subagents: {
+        requireAgentId: true,
+        allowAgents: ["at-parser", "at-collector", "at-analyzer", "at-reporter"],
+        maxSpawnDepth: 1,
+        maxChildrenPerAgent: 4,
+        maxConcurrent: 4,
+        runTimeoutSeconds: 1800,
+        archiveAfterMinutes: 240,
+      },
+    },
+    list: [
+      {
+        id: "at-entry",
+        default: true,
+        name: "AT AutoDetection Entry",
+        identity: { name: "AT AutoDetection" },
+        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-entry",
+        agentDir: "~/.openclaw/agents/at-entry/agent",
+        groupChat: {
+          mentionPatterns: ["@at", "@autodetection", "@入口", "@日志归因"],
+        },
+        tools: {
+          allow: [
+            "exec",
+            "read",
+            "sessions_spawn",
+            "sessions_list",
+            "sessions_history",
+            "session_status",
+          ],
+          deny: ["browser", "canvas", "nodes", "cron"],
+        },
+        subagents: {
+          allowAgents: ["at-parser", "at-collector", "at-analyzer", "at-reporter"],
+          requireAgentId: true,
+          maxChildrenPerAgent: 4,
+          runTimeoutSeconds: 1800,
+        },
+      },
+      {
+        id: "at-parser",
+        name: "AT Parser",
+        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-parser",
+        agentDir: "~/.openclaw/agents/at-parser/agent",
+        tools: {
+          allow: ["exec", "read"],
+          deny: [
+            "sessions_spawn",
+            "sessions_send",
+            "browser",
+            "canvas",
+            "nodes",
+            "cron",
+          ],
+        },
+      },
+      {
+        id: "at-collector",
+        name: "AT Collector",
+        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-collector",
+        agentDir: "~/.openclaw/agents/at-collector/agent",
+        tools: {
+          allow: ["exec", "read"],
+          deny: [
+            "sessions_spawn",
+            "sessions_send",
+            "browser",
+            "canvas",
+            "nodes",
+            "cron",
+          ],
+        },
+      },
+      {
+        id: "at-analyzer",
+        name: "AT Analyzer",
+        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-analyzer",
+        agentDir: "~/.openclaw/agents/at-analyzer/agent",
+        tools: {
+          allow: ["exec", "read"],
+          deny: [
+            "sessions_spawn",
+            "sessions_send",
+            "browser",
+            "canvas",
+            "nodes",
+            "cron",
+          ],
+        },
+      },
+      {
+        id: "at-reporter",
+        name: "AT Reporter",
+        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-reporter",
+        agentDir: "~/.openclaw/agents/at-reporter/agent",
+        tools: {
+          allow: ["exec", "read"],
+          deny: [
+            "sessions_spawn",
+            "sessions_send",
+            "browser",
+            "canvas",
+            "nodes",
+            "cron",
+          ],
+        },
+      },
+    ],
+  },
+
+  // Route all inbound IM traffic to the entry agent.
+  // Keep your existing channel block if you already have one configured.
+  bindings: [
+    { agentId: "at-entry", match: { channel: "telegram", accountId: "*" } },
+    // Optional examples if your gateway already uses these adapters:
+    // { agentId: "at-entry", match: { channel: "slack", accountId: "*" } },
+    // { agentId: "at-entry", match: { channel: "feishu", accountId: "*" } },
+    // { agentId: "at-entry", match: { channel: "whatsapp", accountId: "*" } },
+  ],
+
+  channels: {
+    telegram: {
+      accounts: {
+        default: {
+          botToken: "REPLACE_WITH_TELEGRAM_BOT_TOKEN",
+          dmPolicy: "pairing",
+        },
+      },
+    },
+  },
+}

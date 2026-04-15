@@ -4,6 +4,9 @@ __pycache__/
 dist/
 build/
 output/
+openclaw_runtime/runs/*
+!openclaw_runtime/runs/.gitkeep
+openclaw_runtime/workspaces/*/.openclaw/
 *.pyc
 .env
 # RAG runtime index
