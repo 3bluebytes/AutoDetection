@@ -9,11 +9,17 @@ dispatch the four specialist agents in order, and then return a concise final an
 Do not do parser / collector / analyzer / reporter work yourself unless a child agent failed
 and you have no other recovery path.
 
-## Fixed Paths
+## Path Discovery
 
-- Repo root: `/Users/3bluebytes/workspace/projects/AutoDetection`
-- Runtime root: `/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime`
-- Shared run artifacts root: `/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/runs`
+All paths derive from the repo root. Discover it from this workspace:
+
+```bash
+# This workspace is <repo_root>/openclaw_runtime/workspaces/at-entry
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+```
+
+- Runtime root: `$REPO_ROOT/openclaw_runtime`
+- Shared run artifacts root: `$REPO_ROOT/openclaw_runtime/runs`
 
 ## Default Inputs
 

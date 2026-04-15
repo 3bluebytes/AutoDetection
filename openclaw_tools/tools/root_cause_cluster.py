@@ -97,21 +97,21 @@ def cluster_failures(failures: List[Dict]) -> Dict:
             fi, fj = failures[i], failures[j]
 
             # 维度 1：同一主机
-            same_host = fi.get("host", "") and fi.get("host") == fj.get("host")
+            same_host = 1 if (fi.get("host") and fi.get("host") == fj.get("host")) else 0
 
             # 维度 2：时间窗口
             time_i = _parse_time(fi.get("start_time", ""))
             time_j = _parse_time(fj.get("start_time", ""))
-            time_close = _are_time_close(time_i, time_j)
+            time_close = 1 if _are_time_close(time_i, time_j) else 0
 
             # 维度 3：类型关联
-            types_related = _are_types_correlated(
+            types_related = 1 if _are_types_correlated(
                 fi.get("failure_type", ""),
                 fj.get("failure_type", "")
-            )
+            ) else 0
 
             # 至少满足两个维度才关联
-            correlation_score = sum([same_host, time_close, types_related])
+            correlation_score = same_host + time_close + types_related
             if correlation_score >= 2:
                 adj[i].add(j)
                 adj[j].add(i)

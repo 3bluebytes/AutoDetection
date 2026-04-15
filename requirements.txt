@@ -1,0 +1,7 @@
+# AutoDetection dependencies
+
+# Core runtime
+openpyxl>=3.1.0
+
+# LLM providers (optional, for --use-llm flag)
+requests>=2.28.0

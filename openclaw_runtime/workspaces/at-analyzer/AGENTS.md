@@ -2,51 +2,81 @@
 
 ## Mission
 
-You turn collected logs into structured failure analysis.
-Stay aligned with the current pipeline:
+You turn collected logs into structured failure analysis using advanced capabilities:
 
-- weighted rule engine first
-- optional LLM supplement only when explicitly enabled
-- known issue matching
-- owner / team mapping
+- **Rule engine**: Weighted pattern matching (default)
+- **Adversarial diagnosis**: Agent A (rule) + Agent B (LLM) + arbitration
+- **Model chain**: Tiered model upgrade (rule -> fast model -> reasoning)
+- **Root cause clustering**: Group related failures across test cases
+- Known issue matching + owner/team mapping
 
-## Fixed Paths
+## Path Discovery
 
-- Repo root: `/Users/3bluebytes/workspace/projects/AutoDetection`
-- Wrapper: `/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/analyzer_agent.py`
+Derive paths from the repo root (this workspace is `<repo_root>/openclaw_runtime/workspaces/at-analyzer`):
+
+```bash
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+```
+
+- Wrapper: `$REPO_ROOT/openclaw_runtime/bin/analyzer_agent.py`
 
 ## Inputs
 
 - `collected_logs_json`
 - `job_info_json`
 - `run_dir`
-- optional `use_llm`
 
-## Commands
+## Analysis Modes
 
-Rule-only mode:
+### Mode 1: Rule-only (default)
 
 ```bash
-python3 /Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/analyzer_agent.py \
+python3 $REPO_ROOT/openclaw_runtime/bin/analyzer_agent.py \
   --collected-logs "<collected_logs_json>" \
   --job-info "<job_info_json>" \
   --run-dir "<run_dir>"
 ```
 
-LLM mode:
+### Mode 2: Basic LLM supplement
 
 ```bash
-python3 /Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/analyzer_agent.py \
+python3 $REPO_ROOT/openclaw_runtime/bin/analyzer_agent.py \
   --collected-logs "<collected_logs_json>" \
   --job-info "<job_info_json>" \
   --run-dir "<run_dir>" \
   --use-llm
 ```
 
+### Mode 3: Adversarial diagnosis
+
+```bash
+python3 $REPO_ROOT/openclaw_runtime/bin/analyzer_agent.py \
+  --collected-logs "<collected_logs_json>" \
+  --job-info "<job_info_json>" \
+  --run-dir "<run_dir>" \
+  --use-adversarial
+```
+
+### Mode 4: Model upgrade chain
+
+```bash
+python3 $REPO_ROOT/openclaw_runtime/bin/analyzer_agent.py \
+  --collected-logs "<collected_logs_json>" \
+  --job-info "<job_info_json>" \
+  --run-dir "<run_dir>" \
+  --use-model-chain \
+  --max-tier 2
+```
+
+### Mode 5: With root cause clustering
+
+Add `--use-clustering` to any mode above.
+
 ## Outputs
 
 - `<run_dir>/analysis.json`
 - `<run_dir>/analysis_summary.json`
+- `<run_dir>/clusters.json` (when clustering enabled)
 
 ## Scope Boundaries
 
@@ -57,15 +87,15 @@ python3 /Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/
 
 ## Operating Rules
 
-- Default to rule-only mode unless the parent explicitly requested `use_llm=true`.
-- If LLM dependencies or API keys are unavailable, continue in rule-only mode and record a warning.
+- Default to rule-only mode unless explicitly requested.
+- If LLM unavailable, fall back to rule-only and warn.
 - Preserve structured output; do not answer in free-form prose only.
 - Keep one analysis item per failed test case.
 
 ## Success Criteria
 
 - `analysis.json` is a JSON array
-- `analysis_summary.json` contains `failure_count`, `type_counts`, `warnings`, `used_llm`
+- `analysis_summary.json` contains `failure_count`, `type_counts`, `warnings`, `used_adversarial`, `used_model_chain`, `used_clustering`
 
 ## Completion Message
 
@@ -73,5 +103,5 @@ Return:
 
 - analyzed failure count
 - failure type histogram
-- whether LLM was used
+- which advanced modes were used
 - `analysis.json` path

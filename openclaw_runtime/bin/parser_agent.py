@@ -10,7 +10,12 @@ import json
 import sys
 from pathlib import Path
 
-from common import ensure_dir, load_module, write_json
+# Add project root to path (common.py already does this, but ensure for direct runs)
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from common import ensure_dir, write_json, read_json
+from openclaw_tools.tools.read_local_log import read_results_json
+from openclaw_tools.tools.version_identifier import extract_uvp_version
 
 
 def main() -> int:
@@ -20,10 +25,8 @@ def main() -> int:
     args = parser.parse_args()
 
     run_dir = ensure_dir(args.run_dir)
-    read_local_log = load_module("read_local_log_tool", "openclaw_tools/tools/read_local_log.py")
-    version_identifier = load_module("version_identifier_tool", "openclaw_tools/tools/version_identifier.py")
 
-    result = read_local_log.read_results_json(args.job_root)
+    result = read_results_json(args.job_root)
     if not result.get("success"):
         print(json.dumps(result, ensure_ascii=False), file=sys.stderr)
         return 1
@@ -36,7 +39,7 @@ def main() -> int:
         "date": data.get("date"),
         "host": data.get("host"),
         "operator": data.get("operator", ""),
-        "uvp_version": version_identifier.extract_uvp_version(data),
+        "uvp_version": extract_uvp_version(data),
         "total": data.get("total", len(data.get("tests", []))),
         "passed": data.get("passed"),
         "failed": data.get("failed", len(failed_tests)),

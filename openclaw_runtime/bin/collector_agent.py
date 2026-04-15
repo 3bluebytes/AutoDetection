@@ -7,9 +7,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-from common import ensure_dir, load_module, read_json, write_json
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from common import ensure_dir, read_json, write_json
+from openclaw_tools.tools.read_local_log import read_local_log
 
 
 def main() -> int:
@@ -21,13 +26,12 @@ def main() -> int:
 
     run_dir = ensure_dir(args.run_dir)
     failed_tests = read_json(args.failed_tests)
-    read_local_log = load_module("read_local_log_tool", "openclaw_tools/tools/read_local_log.py")
 
     collected = []
     missing_logs = []
     for test in failed_tests:
         test_id = str(test.get("id", ""))
-        log_result = read_local_log.read_local_log(args.job_root, test_id, "debug.log")
+        log_result = read_local_log(args.job_root, test_id, "debug.log")
         entry = {
             "test_id": test_id,
             "test_name": test.get("name", ""),

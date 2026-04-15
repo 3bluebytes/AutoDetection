@@ -5,13 +5,17 @@ Shared helpers for the thin OpenClaw runtime wrappers.
 
 from __future__ import annotations
 
-import importlib.util
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+# Ensure project root is in sys.path for standard imports
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 
 def ensure_dir(path: str | Path) -> Path:
@@ -31,12 +35,9 @@ def write_json(path: str | Path, data: Any) -> Path:
     return target
 
 
-def load_module(module_name: str, relative_path: str):
-    module_path = PROJECT_ROOT / relative_path
-    spec = importlib.util.spec_from_file_location(module_name, module_path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"Unable to load module from {module_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+# Standard imports for business logic modules
+# Import these directly in wrapper scripts:
+#   from openclaw_tools.tools.rule_match import classify_failure
+#   from openclaw_tools.tools.version_identifier import extract_uvp_version
+#   etc.
 

@@ -23,7 +23,7 @@
         default: true,
         name: "AT AutoDetection Entry",
         identity: { name: "AT AutoDetection" },
-        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-entry",
+        workspace: "{{REPO_ROOT}}/openclaw_runtime/workspaces/at-entry",
         agentDir: "~/.openclaw/agents/at-entry/agent",
         groupChat: {
           mentionPatterns: ["@at", "@autodetection", "@入口", "@日志归因"],
@@ -49,7 +49,7 @@
       {
         id: "at-parser",
         name: "AT Parser",
-        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-parser",
+        workspace: "{{REPO_ROOT}}/openclaw_runtime/workspaces/at-parser",
         agentDir: "~/.openclaw/agents/at-parser/agent",
         tools: {
           allow: ["exec", "read"],
@@ -66,7 +66,7 @@
       {
         id: "at-collector",
         name: "AT Collector",
-        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-collector",
+        workspace: "{{REPO_ROOT}}/openclaw_runtime/workspaces/at-collector",
         agentDir: "~/.openclaw/agents/at-collector/agent",
         tools: {
           allow: ["exec", "read"],
@@ -83,7 +83,7 @@
       {
         id: "at-analyzer",
         name: "AT Analyzer",
-        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-analyzer",
+        workspace: "{{REPO_ROOT}}/openclaw_runtime/workspaces/at-analyzer",
         agentDir: "~/.openclaw/agents/at-analyzer/agent",
         tools: {
           allow: ["exec", "read"],
@@ -100,7 +100,7 @@
       {
         id: "at-reporter",
         name: "AT Reporter",
-        workspace: "/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/workspaces/at-reporter",
+        workspace: "{{REPO_ROOT}}/openclaw_runtime/workspaces/at-reporter",
         agentDir: "~/.openclaw/agents/at-reporter/agent",
         tools: {
           allow: ["exec", "read"],

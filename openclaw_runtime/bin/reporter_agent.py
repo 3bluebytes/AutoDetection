@@ -7,9 +7,23 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-from common import ensure_dir, load_module, read_json, write_json, PROJECT_ROOT
+# Add project root to path
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from common import ensure_dir, read_json, write_json, PROJECT_ROOT
+from openclaw_tools.tools.reporter import (
+    render_markdown_report,
+    render_json_report,
+    render_mercury_payload,
+)
+from openclaw_tools.tools.excel_reporter import (
+    render_daily_excel,
+    render_stats_excel,
+    compute_case_stats,
+)
 
 
 def main() -> int:
@@ -25,10 +39,9 @@ def main() -> int:
     job_info = read_json(args.job_info)
     analysis = read_json(args.analysis)
 
-    reporter = load_module("reporter_tool", "openclaw_tools/tools/reporter.py")
-    markdown_result = reporter.render_markdown_report(job_info, analysis, str(output_dir / "report.md"))
-    json_result = reporter.render_json_report(job_info, analysis, str(output_dir / "report.json"))
-    mercury_payload = reporter.render_mercury_payload(job_info, analysis)
+    markdown_result = render_markdown_report(job_info, analysis, str(output_dir / "report.md"))
+    json_result = render_json_report(job_info, analysis, str(output_dir / "report.json"))
+    mercury_payload = render_mercury_payload(job_info, analysis)
     mercury_payload_path = write_json(output_dir / "mercury_payload.json", mercury_payload.get("payload", {}))
 
     manifest = {
@@ -42,14 +55,13 @@ def main() -> int:
     }
 
     try:
-        excel_reporter = load_module("excel_reporter_tool", "openclaw_tools/tools/excel_reporter.py")
-        daily_result = excel_reporter.render_daily_excel(job_info, analysis, str(output_dir / "daily_report.xlsx"))
+        daily_result = render_daily_excel(job_info, analysis, str(output_dir / "daily_report.xlsx"))
         manifest["excel_daily"] = daily_result.get("output_path", "")
 
         history_path = PROJECT_ROOT / "mock_data" / "history.json"
         if history_path.exists():
-            case_stats = excel_reporter.compute_case_stats(read_json(history_path))
-            stats_result = excel_reporter.render_stats_excel(case_stats, str(output_dir / "case_stats.xlsx"))
+            case_stats = compute_case_stats(read_json(history_path))
+            stats_result = render_stats_excel(case_stats, str(output_dir / "case_stats.xlsx"))
             manifest["excel_stats"] = stats_result.get("output_path", "")
         else:
             manifest["warnings"].append("mock_data/history.json not found, skipped cumulative stats workbook")

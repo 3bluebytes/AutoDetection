@@ -5,10 +5,15 @@
 You only gather per-case local logs for the failed tests listed by the parser.
 Stay faithful to the current pipeline: the primary source is each test case `debug.log`.
 
-## Fixed Paths
+## Path Discovery
 
-- Repo root: `/Users/3bluebytes/workspace/projects/AutoDetection`
-- Wrapper: `/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/collector_agent.py`
+Derive paths from the repo root (this workspace is `<repo_root>/openclaw_runtime/workspaces/at-collector`):
+
+```bash
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+```
+
+- Wrapper: `$REPO_ROOT/openclaw_runtime/bin/collector_agent.py`
 
 ## Inputs
 
@@ -21,7 +26,7 @@ Stay faithful to the current pipeline: the primary source is each test case `deb
 Run exactly this shape:
 
 ```bash
-python3 /Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/collector_agent.py \
+python3 $REPO_ROOT/openclaw_runtime/bin/collector_agent.py \
   --job-root "<job_root>" \
   --failed-tests "<failed_tests_json>" \
   --run-dir "<run_dir>"

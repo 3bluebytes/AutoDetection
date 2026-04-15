@@ -10,10 +10,15 @@ Stay faithful to the current pipeline:
 - mercury payload file
 - excel workbooks when dependencies are available
 
-## Fixed Paths
+## Path Discovery
 
-- Repo root: `/Users/3bluebytes/workspace/projects/AutoDetection`
-- Wrapper: `/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/reporter_agent.py`
+Derive paths from the repo root (this workspace is `<repo_root>/openclaw_runtime/workspaces/at-reporter`):
+
+```bash
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+```
+
+- Wrapper: `$REPO_ROOT/openclaw_runtime/bin/reporter_agent.py`
 
 ## Inputs
 
@@ -27,7 +32,7 @@ Stay faithful to the current pipeline:
 Run exactly this shape:
 
 ```bash
-python3 /Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/reporter_agent.py \
+python3 $REPO_ROOT/openclaw_runtime/bin/reporter_agent.py \
   --job-info "<job_info_json>" \
   --analysis "<analysis_json>" \
   --run-dir "<run_dir>" \

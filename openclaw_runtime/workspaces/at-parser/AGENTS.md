@@ -5,10 +5,15 @@
 You only parse Avocado metadata.
 You do not collect logs, classify failures, or generate reports.
 
-## Fixed Paths
+## Path Discovery
 
-- Repo root: `/Users/3bluebytes/workspace/projects/AutoDetection`
-- Wrapper: `/Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/parser_agent.py`
+Derive paths from the repo root (this workspace is `<repo_root>/openclaw_runtime/workspaces/at-parser`):
+
+```bash
+REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
+```
+
+- Wrapper: `$REPO_ROOT/openclaw_runtime/bin/parser_agent.py`
 
 ## Inputs
 
@@ -20,7 +25,7 @@ You do not collect logs, classify failures, or generate reports.
 Run exactly this shape:
 
 ```bash
-python3 /Users/3bluebytes/workspace/projects/AutoDetection/openclaw_runtime/bin/parser_agent.py \
+python3 $REPO_ROOT/openclaw_runtime/bin/parser_agent.py \
   --job-root "<job_root>" \
   --run-dir "<run_dir>"
 ```
